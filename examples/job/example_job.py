@@ -35,7 +35,7 @@ app = SkrtApp(algs=algs, setup_script=setup_script)
 app = alg1
 
 # Create list of paths to patients folders
-data_dir = '/r02/skrt/data/head_and_neck/consolidation/'
+data_dir = '/r02/voxtox/data/head_and_neck/consolidation/'
 paths = glob.glob(f'{data_dir}/VT*')
 # Define the input data
 input_data = PatientDataset(paths=paths[0:3])
