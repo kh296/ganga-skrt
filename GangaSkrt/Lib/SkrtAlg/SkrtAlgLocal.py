@@ -194,7 +194,7 @@ class SkrtAlgLocal(IRuntimeHandler):
             f'log_level="{log_level}")',
             'algs = [skrt_alg]',
             'app = skrt_app.Application'
-            f'(algs=algs")',
+            f'(algs=algs)',
             'status = app.run(paths=paths)',
             'print()',
             'print(f"Return code: {status.code}")',
