@@ -72,7 +72,7 @@ class SkrtAppLocal(SkrtAlgLocal):
             ])
         lines.extend([
                 '',
-                'app = skrt_app.SkrtManager'
+                'app = skrt_app.Application'
                 + f'(algs=algs, log_level="{log_level}")',
                 'status = app.run(paths=paths)',
                 'print()',
