@@ -1,6 +1,7 @@
 # File: GangaSkrt/Lib/CsvMerger.py
 '''Provide for merging files of data in CSV format.'''
 
+from GangaCore.GPIDev.Schema import SimpleItem
 from GangaCore.GPIDev.Adapters.IMerger import IMerger
 from GangaCore.Utility.logging import getLogger
 
