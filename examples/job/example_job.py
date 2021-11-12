@@ -7,8 +7,8 @@ import os
 
 # Determine script file path, and use this to define the path
 # to the script for setting up the Skrt environment.
-install_dir = os.path.realpath(__file__).split('/ganga_skrt')[0]
-example_job_dir = f'{install_dir}/ganga_skrt/examples/job'
+install_dir = os.path.realpath(__file__).split('/ganga-skrt')[0]
+example_job_dir = f'{install_dir}/ganga-skrt/examples/job'
 app_dir = f'{example_job_dir}'
 setup_script = f'{example_job_dir}/skrt_conda.sh'
 
