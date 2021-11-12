@@ -1,0 +1,8 @@
+name: ganga-skrt
+dependencies:
+  - ipython
+  - pip
+  - python >=3.8.0,<3.9
+  - pip:
+    - -e git+https://github.com/ganga-devs/ganga#egg=ganga
+    - -e ../ganga-skrt

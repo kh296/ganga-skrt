@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+
+# Script for creating a Ganga configuration file (~/.gangarc),
+# setting parameter values useful for working with Skrt software
+
+import in_place
+import os
+import pathlib
+import sys
+
+import GangaSkrt
+
+def create_default_gangarc(gangarc='~/.gangarc'):
+    '''
+    Create default Ganga configuration file.
+
+    This function relies on the ganga executable being available.
+
+    Parameter
+    ---------
+    gangarc : str, default='~/.gangarc'
+        Path where Ganga configuration file is to be written.
+    '''
+    gangarc = os.path.expanduser(gangarc)
+    if os.path.exists(gangarc):
+        os.remove(gangarc)
+    ganga_command = f'ganga --generate-config'
+    os.system(ganga_command)
+    return gangarc
+
+def modify_gangarc(opts={}, gangarc='~/.gangarc'):
+    '''
+    Modify parameter values in the Ganga configuration file.
+
+    Parameters
+    ----------
+    gangarc : str, default='~/.gangarc'
+        Path to Ganga configuration file.
+    opts    : dict, default={}
+        Dictionary whose key-value pairs are mapped to
+        parameter-value pairs in the Ganga configuration file.
+
+    Note that this function only works for parameters in the
+    Ganga configuration file that have unique names.  Some parameter
+    names occur in more than one section.
+    '''
+    gangarc = os.path.expanduser(gangarc)
+    if opts:
+        with in_place.InPlace(gangarc) as config:
+            for line in config:
+                key_found = ''
+                for key in opts:
+                    if 1 == line.find(key):
+                        line = f'{key} = {opts[key]}\n'
+                        key_found = key
+                        break
+                config.write(line)
+                if key_found:
+                    del opts[key_found]
+    return gangarc
+
+# Create dictionary defining parameter-value pairs
+# for modifying Ganga configuration file.
+opts = {}
+# GangaSkrt setup
+opts['RUNTIME_PATH'] = str(pathlib.Path(GangaSkrt.__file__).parent)
+# Filetype-merger associations for SmartMerger
+opts['associate'] = {'log':'TextMerger','root':'RootMerger',
+                     'text':'TextMerger','txt':'TextMerger',
+                     'csv':'CsvMerger','json':'JsonMerger'}
+# Poll rate for Condor backend
+opts['Condor'] = 300
+# ROOT setup
+# opts['arch'] = 'x86_64-slc6-gcc447'
+# opts['location'] = os.path.expanduser('~/sw/ROOT')
+#o pt_dict['version'] = '5.30.02'
+# Condor defaults
+opts['rank'] = ''
+# Default Condor requirements
+opts['excluded_machine'] = ['cl011.hep.phy.private.cam.ac.uk',
+                            'cl012.hep.phy.private.cam.ac.uk',
+                            'cl013.hep.phy.private.cam.ac.uk',
+                            'cl014.hep.phy.private.cam.ac.uk']
+
+opts['other'] = '[\'(POOL != "GENERAL" && HAS_r02)\']'
+
+# Create and modify Ganga configuration file.
+create_default_gangarc()
+modify_gangarc(opts)
