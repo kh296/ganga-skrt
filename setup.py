@@ -10,7 +10,7 @@ setup(
     license='',
     packages=find_packages(),
     install_requires=[
-                      'ganga==8.5.5',
+                      'ganga',
                       'in_place',
                      ],
     scripts=['examples/bin/create_config', 'examples/bin/create_setup'],
