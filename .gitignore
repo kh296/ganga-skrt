@@ -7,4 +7,6 @@ __pycache__/
 
 *.egg-info/
 
+skrt_conda.sh
+
 src/
