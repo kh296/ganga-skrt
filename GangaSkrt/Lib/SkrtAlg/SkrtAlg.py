@@ -121,7 +121,7 @@ class SkrtAlg(IPrepareApp):
         Parameters
         ----------
         alg : skrt.application.Algorithm/None
-            Scikit-rt object from which properties are to be unpacked
+            Scikit-rt algorithm from which properties are to be unpacked
         setup_script : str
             Bash setup script to be sourced on worker node;
             ignored if SkrtAlg is passed in list to SkrtApp
