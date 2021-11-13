@@ -7,6 +7,8 @@ from GangaCore.GPIDev.Lib.File import ShareDir
 from GangaCore.GPIDev.Schema import Schema, SimpleItem, Version
 from GangaCore.GPIDev.Adapters.IPrepareApp import IPrepareApp
 
+from GangaSkrt.Lib.SkrtAlg.SkrtAlg import SkrtAlg
+
 
 class SkrtApp(IPrepareApp):
     '''
@@ -37,6 +39,10 @@ class SkrtApp(IPrepareApp):
         'hash': SimpleItem(
             defvalue=None, typelist=[None, str], hidden=1,
             doc='MD5 hash for application\'s preparable attributes'),
+        'app': SimpleItem(
+            defvalue=None, optional=1, typelist=None,
+            doc='If not None, skrt.application.Application '
+                'from which properties are initialised'),
     })
 
     _category = 'applications'
@@ -44,11 +50,45 @@ class SkrtApp(IPrepareApp):
     # Make available methods implemented in base class
     _exportmethods = ['postprocess', 'prepare', 'unprepare']
 
-    def __init__(self):
+    def __init__(self, algs=[], setup_script='', log_level=''):
         '''
         Create instance of SkrtApp.
         '''
         super(SkrtApp, self).__init__()
+        
+        if algs:
+            self.algs = algs
+
+        if setup_script:
+            self.setup_script = setup_script
+
+        if log_level:
+            self.log_level = log_level
+
+    @classmethod
+    def from_application(cls, app=None, setup_script=''):
+
+        '''
+        Create instance of SkrtApp from scikit-rt application
+
+        Parameters
+        ----------
+        alg : skrt.application.Application/None
+            Scikit-rt application from which properties are to be unpacked
+        setup_script : str
+            Bash setup script to be sourced on worker node
+        '''
+
+        if app is None:
+            skrt_app = cls()
+        else:
+            algs = []
+            for alg in app.algs:
+                skrt_alg = SkrtAlg.from_algorithm(alg, setup_script)
+                algs.append(skrt_alg)
+            skrt_app = cls(algs, setup_script, app.log_level)
+
+        return skrt_app
 
     def configure(self, master_appconfig):
         '''
