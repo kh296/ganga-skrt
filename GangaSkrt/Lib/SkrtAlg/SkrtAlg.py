@@ -4,6 +4,8 @@
 Define SkrtAlg application.
 '''
 
+from inspect import getfile
+
 from GangaCore.Utility.Config import config_scope
 from GangaCore.Utility import logging
 from GangaCore.GPIDev.Base.Proxy import getName
@@ -59,7 +61,7 @@ class SkrtAlg(IPrepareApp):
     _exportmethods = ['postprocess', 'prepare', 'unprepare']
 
     def __init__(self, alg_class='', alg_module='', alg_name='',
-                 opts={}, setup_script='', root_file=''):
+                 opts={}, log_level='', setup_script=''):
         '''
         Create instance of SkrtAlg.
 
@@ -69,18 +71,18 @@ class SkrtAlg(IPrepareApp):
         Parameters
         ----------
         alg_class    : str, default=''
-            Name of Skrt algorithm class to be instantiated
+            Name of scikit-rt  algorithm class to be instantiated
         alg_module   : str, default=''
-            Path to module containing Skrt algorithm class
+            Path to module containing scikit-rt algorithm class
         alg_name     : str, default=''
             Name to be associated with algorithm instantiation
         opts         : dict, default={}
             Dictionary of options to be passed to algorithm constructor
-        log_level    : str, default='INFO'
+        log_level    : str, default=''
             Severity level for event logging.  Allowed values are:
             'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
         setup_script : str, default=''
-            Bash setup script to be sourced on worker node
+            Bash setup script to be sourced on worker node;
             ignored if SkrtAlg is passed in list to SkrtApp
         '''
         super(SkrtAlg, self).__init__()
@@ -104,10 +106,41 @@ class SkrtAlg(IPrepareApp):
         log_levels = ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
         if log_level:
             assert(log_level in log_levels)
+            self.log_level = log_level
 
         if setup_script:
             assert(isinstance(setup_script, str))
             self.setup_script = setup_script
+
+    @classmethod
+    def from_algorithm(cls, alg=None, setup_script=''):
+
+        '''
+        Create instance of SkrtAlg from scikit-rt algorithm
+
+        Parameters
+        ----------
+        alg : skrt.application.Algorithm/None
+            Scikit-rt object from which properties are to be unpacked
+        setup_script : str
+            Bash setup script to be sourced on worker node;
+            ignored if SkrtAlg is passed in list to SkrtApp
+        '''
+
+        if alg is None:
+            skrt_alg = cls()
+        else:
+            alg_class = type(alg).__name__
+            alg_module = alg.alg_module
+            print(alg.__class__.__module__)
+            alg_name = alg.name
+            opts = alg.opts
+            log_level = alg.log_level
+            skrt_alg = cls(alg_class=alg_class, alg_module=alg_module,
+                          alg_name=alg_name, opts=opts, log_level=log_level,
+                          setup_script=setup_script)
+
+        return skrt_alg
 
     def __repr__(self):
         '''
