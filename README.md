@@ -26,6 +26,11 @@ may not work with older versions of git.
      ```
      create_config
      ```
+   - Optionally create setup script to be used by jobs at runtime:
+     ```
+     create_setup # output by default to skrt_conda.sh
+     create_setup -h # show usage information
+     ```
 
 2. Developer installation, using [git](https://git-scm.com) and
 [conda](https://docs.conda.io/):
@@ -47,3 +52,26 @@ may not work with older versions of git.
      ```
      create_config
      ```
+   - Optionally create setup script to be used by jobs at runtime:
+     ```
+     create_setup # output by default to skrt_conda.sh
+     create_setup -h # show usage information
+     ```
+
+## Usage
+
+- For general information on using Ganga, see [Ganga User Guide](https://ganga.readthedocs.io/en/latest/UserGuide/index.html).
+
+- For examples of defining a Ganga job to run a
+[scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
+see [ganga-skrt/examples/jobs](https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt/-/tree/main/examples/job).  Once data paths and setup script are defined
+correctly, example scripts can be used for job submission from within
+a Ganga session with:
+```
+ganga <example.py>
+```
+
+- The [scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) package
+doesn't need to be available when submitting a Ganga job to run a
+[scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
+but must be available when the job runs.
