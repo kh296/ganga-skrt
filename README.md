@@ -34,44 +34,51 @@ may not work with older versions of git.
 
 2. Developer installation, using [git](https://git-scm.com) and
 [conda](https://docs.conda.io/):
-   - Clone repository:
-     - With [gitlab access via ssh keys](https://docs.gitlab.com/ee/ssh/):
-       ```
-       git clone git@codeshare.phy.cam.ac.uk:/kh296/ganga-skrt
-       ```
+   - Set up gitlab access [via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) or [via ssh keys](https://docs.gitlab.com/ee/ssh/)
+   - `cd` to directory where code is to be installed.
+   - Clone ganga-skrt and skrt repositories:
      - With [gitlab access via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html):
        ```
        git clone https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt
+       git clone https://codeshare.phy.cam.ac.uk/hp346/scikit-rt
        ```
-   - From top-level directory of cloned repository, create **ganga-skrt**
-     environment:
+     - With [gitlab access via ssh keys](https://docs.gitlab.com/ee/ssh/):
+       ```
+       git clone git@codeshare.phy.cam.ac.uk:/kh296/ganga-skrt
+       git clone git@codeshare.phy.cam.ac.uk/hp346/scikit-rt
+       ```
+   - Create and activate **ganga-skrt** environment:
      ```
+     cd ganga-skrt
      conda env create --file environment.yml
+     conda activate ganga-skrt
+     ```
+   - Add **skrt** to the **ganga-skrt** environment:
+     ```
+     pip install -e ../skrt
      ```
    - Create Ganga configuration file (`~/.gangarc`):
      ```
      create_config
      ```
-   - Optionally create setup script to be used by jobs at runtime:
+   - Create runtime setup script (`skrt_conda.sh`), ready for running example:
      ```
-     create_setup # output by default to skrt_conda.sh
-     create_setup -h # show usage information
+     cd examples/job
+     create_setup 
+     ```
+   - Start `ganga` session:
+     ```
+     ganga
+     ```
+   - From inside `ganga` session, submit example job:
+     ```
+     ganga simple_application.py
      ```
 
 ## Usage
 
 - For general information on using Ganga, see [Ganga User Guide](https://ganga.readthedocs.io/en/latest/UserGuide/index.html).
-
+d
 - For examples of defining a Ganga job to run a
 [scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
-see [ganga-skrt/examples/jobs](https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt/-/tree/main/examples/job).  Once data paths and setup script are defined
-correctly, example scripts can be used for job submission from within
-a Ganga session with:
-```
-ganga <example.py>
-```
-
-- The [scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) package
-doesn't need to be available when submitting a Ganga job to run a
-[scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
-but must be available when the job runs.
+see [ganga-skrt/examples/jobs](https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt/-/tree/main/examples/job).
