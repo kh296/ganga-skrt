@@ -1,0 +1,51 @@
+#!/bin/bash
+
+CONDA_HOME="${HOME}/miniconda3"
+CONDA_ENV="ganga-skrt"
+OUT_PATH="skrt_conda.sh"
+
+function show_usage {
+        echo "Usage: $(basename $0) [-h] [-c <conda_home>] [-e <conda_env>] [-o <out_path>]" 2>&1
+        echo "   -h show this help"
+        echo "   -c <conda_home> => Location of conda installation [default: ${CONDA_HOME}]  "
+        echo "   -e <conda_env>  => Conda environment to activate [default: ${CONDA_ENV}]"
+        echo "   -o <out_path>   => Path for writing setup script [default: ${OUT_PATH}]"
+        exit 0
+}
+while getopts 'c:e:o:' OPT
+do
+  case ${OPT} in
+    h) show_usage ;;
+    c) CONDA_HOME=${OPTARG} ;;
+    e) CONDA_ENV=${OPTARG} ;;
+    o) OUT_PATH=${OPTARG} ;;
+    ?) show_usage ;;
+  esac
+done
+
+SETUP_FILE=${OUT_PATH}
+cat >${SETUP_FILE} <<EOF
+# Script for setting up conda, and activating the skrt environment.
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="\$('${CONDA_HOME}/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ \$? -eq 0 ]; then
+    eval "\$__conda_setup"
+else
+    if [ -f "${CONDA_HOME}/etc/profile.d/conda.sh" ]; then
+        . "${CONDA_HOME}/etc/profile.d/conda.sh"
+    else
+        export PATH="${CONDA_HOME}/bin:\$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+conda activate ${CONDA_ENV}
+EOF
+
+echo ""
+echo "Setup file for Conda installation at '${CONDA_HOME}'"
+echo "and environment '${CONDA_ENV}'" written to:
+echo "    ${OUT_PATH}"
