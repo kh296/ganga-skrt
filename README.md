@@ -80,7 +80,6 @@ may not work with older versions of git.
 ## Usage
 
 - For general information on using Ganga, see [Ganga User Guide](https://ganga.readthedocs.io/en/latest/UserGuide/index.html).
-d
 - For examples of defining a Ganga job to run a
 [scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
 see [ganga-skrt/examples/jobs](https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt/-/tree/main/examples/job).
