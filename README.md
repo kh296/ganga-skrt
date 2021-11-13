@@ -34,7 +34,7 @@ may not work with older versions of git.
 
 2. Developer installation, using [git](https://git-scm.com) and
 [conda](https://docs.conda.io/):
-   - Set up gitlab access [via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) or [via ssh keys](https://docs.gitlab.com/ee/ssh/)
+   - Set up gitlab access [via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) or [via ssh keys](https://docs.gitlab.com/ee/ssh/).
    - `cd` to directory where code is to be installed.
    - Clone ganga-skrt and skrt repositories:
      - With [gitlab access via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html):
@@ -66,6 +66,8 @@ may not work with older versions of git.
      cd examples/job
      create_setup 
      ```
+   - Edit `simple_application.py` so that the function `get_paths()` returns
+     a list of paths to patient data available on the installation machine.
    - Start `ganga` session:
      ```
      ganga
