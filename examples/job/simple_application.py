@@ -26,8 +26,7 @@ class SimpleAlgorithm(Algorithm):
     - finalise()   : called after processing all datasets.
     '''
 
-    def __init__(self, opts={}, name=None, log_level='INFO',
-                 alg_module=''):
+    def __init__(self, opts={}, name=None, log_level='INFO'):
         '''
         Create instance of SimpleAlgorithm.
 
@@ -42,8 +41,6 @@ class SimpleAlgorithm(Algorithm):
         log_level : str, default='INFO'
             Severity level for event logging.  Defined values are:
             'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
-        alg_module: str, default=''
-            Path to module where algorithm is defined.
         '''
 
         # Configurable variables
@@ -52,7 +49,7 @@ class SimpleAlgorithm(Algorithm):
 
         # Call to __init__() method of base class
         # sets values for object properties based on dictionary opts
-        Algorithm.__init__(self, opts, name, log_level, alg_module)
+        Algorithm.__init__(self, opts, name, log_level)
 
         # Counter of number of patients to be analysed
         self.n_patient = 0
@@ -105,13 +102,18 @@ def get_app(setup_script=''):
     if 'Ganga' in __name__:
         opts['max_patient'] = 4
 
+    # Set options differently for batch processing via Ganga
+    if 'Ganga' in __name__:
+        # The number of datasets for processing is set via PatientDataset
+        opts['max_patient'] = 10000
+        # Ganga needs to know the module from which to import the algorithm
+        opts['alg_module'] = fullpath(sys.argv[0])
+
     # Set the severity level for event logging
     log_level = 'INFO'
 
     # Create algorithm object
-    alg_module = fullpath(sys.argv[0])
-    alg = SimpleAlgorithm(opts=opts, name=None, log_level=log_level,
-                          alg_module=alg_module)
+    alg = SimpleAlgorithm(opts=opts, name=None, log_level=log_level)
 
     # Create the list of algorithms to be run (here just the one)
     algs = [alg]

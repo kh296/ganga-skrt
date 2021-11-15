@@ -16,7 +16,7 @@ from skrt.application import Algorithm, Application
 class AnalysisAlgorithm(Algorithm):
     '''Subclass of Algorithm, for analysing patient data'''
 
-    def __init__(self, opts={}, name=None, log_level=None, alg_module=''):
+    def __init__(self, opts={}, name=None, log_level=None):
         '''
         Create instance of Algorithm class.
 

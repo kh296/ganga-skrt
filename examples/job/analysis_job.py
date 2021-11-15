@@ -16,9 +16,12 @@ def get_app(setup_script=''):
     # Set the maximum number of patients to be analysed
     opts['max_patient'] = 3
 
-    # Set options differently for batch processing
+    # Set options differently for batch processing via Ganga
     if 'Ganga' in __name__:
+        # The number of datasets for processing is set via PatientDataset
         opts['max_patient'] = 10000
+        # Ganga needs to know the module from which to import the algorithm
+        opts['alg_module'] = getfile(AnalysisAlgorithm)
 
     # Create dictionary where each key is a name to be assigned
     # to a region of interest (ROI), and the associated value
@@ -80,9 +83,7 @@ def get_app(setup_script=''):
     log_level = 'INFO'
 
     # Create algorithm object
-    alg_module = getfile(AnalysisAlgorithm)
-    alg = AnalysisAlgorithm(opts=opts, name=None, log_level=log_level,
-                            alg_module=alg_module)
+    alg = AnalysisAlgorithm(opts=opts, name=None, log_level=log_level)
 
     # Create the list of algorithms to be run (here just the one)
     algs = [alg]
