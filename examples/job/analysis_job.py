@@ -2,6 +2,7 @@ import glob
 from inspect import getfile
 
 from skrt.application import Application
+from skrt.core import fullpath
 
 from analysis_application import AnalysisAlgorithm
 
@@ -26,7 +27,7 @@ def get_app(setup_script=''):
     # Create dictionary where each key is a name to be assigned
     # to a region of interest (ROI), and the associated value
     # is the list of names that may have been used during contouring.
-    opts['roi_map']= {}
+    opts['roi_map'] = {}
     opts['roi_map']['parotid_left'] = [
         'left parotid (dn)', 'left parotid - dn',
         'l parotid', 'left parotid', 'lt parotid', 'parotid lt', 'parotid_l',
@@ -71,7 +72,7 @@ def get_app(setup_script=''):
         'right submand gland', 'rt submandblr', 'submand right (in ptv)',
         'r smgland', 'r submadibular', 'right sumandibular gland',
         'r submandibular_old', 'r sum mandib']
-    opts['roi_map']['spinal_cord' ] = [
+    opts['roi_map']['spinal_cord'] = [
         'spinal cord - dn', 'cord', 'spinal cord', 'spinal_cord',
         'spinal cord sjj', 'spinal cord - sjj', 'spinal_cord_sp'
         'spine', 'spinal_canal_sp', 'spinal_cord_', 'spinal canal',
@@ -93,14 +94,16 @@ def get_app(setup_script=''):
 
     return app
 
+
 def get_paths():
     # Define the patient data to be analysed
     data_dir = '/Users/karl/data/head_and_neck/vspecial/' \
                '3_patients__multiple_structures__all_mv/'
-    #data_dir = '/r02/voxtox/data/head_and_neck/consolidation/'
+    # data_dir = '/r02/voxtox/data/head_and_neck/consolidation/'
     paths = glob.glob(f'{data_dir}/VT*')
 
     return paths
+
 
 if '__main__' == __name__:
     # Define and configure the application to be run.
