@@ -135,7 +135,7 @@ if 'Ganga' in __name__:
 
     # Define merging of subjob outputs
     merger = SmartMerger()
-    merger.files = ['stderr', 'stdout']
+    merger.files = ['stderr', 'stdout', 'roi_info.csv']
     merger.ignorefailed = True
     postprocessors = [merger]
 
@@ -143,10 +143,10 @@ if 'Ganga' in __name__:
     name = 'analysis_job'
 
     # Define list of outputs to be saved
-    outbox = []
+    outbox = ['roi_info.csv']
 
     # Create the job, and submit to processing system
     j = Job(application=ganga_app, backend=backend, inputdata=input_data,
-            outputsandbox=outbox, splitter=splitter,
+            outputfiles=outbox, splitter=splitter,
             postprocessors=postprocessors, name=name)
     j.submit()
