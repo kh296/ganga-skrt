@@ -60,30 +60,36 @@ class AnalysisAlgorithm(Algorithm):
 
         if len(study.ct_structure_sets) >= 2:
             # Assume that earliest structure set is from clinical planning
-            planning_structs = study.ct_structure_sets[0]\
-                    .filter(names=self.roi_map, keep_renamed_only=True)
+            study.ct_structure_sets[0]\
+                .rename_rois(names=self.roi_map, keep_renamed_only=True)
+            planning_rois = study.ct_structure_sets[0]
             # Assume that latest structure set is from VoxTox study
-            voxtox_structs = study.ct_structure_sets[-1]\
-                    .filter(names=self.roi_map, keep_renamed_only=True)
+            study.ct_structure_sets[-1]\
+                .rename_rois(names=self.roi_map, keep_renamed_only=True)
+            voxtox_rois = study.ct_structure_sets[-1]
             
             # Calculate dice scores for planning ROIs versus VoxTox ROIs,
             # and add to the list of data records.
             # Note: the ROI class defines methods for calculating
             # a number of comparison metrics.
-            for planning_roi in planning_structs:
-                voxtox_roi = voxtox_structs[planning_roi.name]
+            for planning_roi in planning_rois:
+                roi_name = planning_roi.name
+                if roi_name not in voxtox_rois.get_roi_names():
+                    continue
+                voxtox_roi = voxtox_rois[roi_name]
                 dice = planning_roi.get_dice(voxtox_roi)
-                self.roi_records.append({
-                    'id': patient.id,
-                    'roi': planning_roi.name,
-                    'dice': dice,
-                    })
                 self.logger.info(f'{planning_roi.name}: dice = {dice:.4f}')
                 # If dice score is 1.0, the same ROI may have been picked up
                 # got planning and VoxTox - worth checking.
                 if dice > 0.999:
                     self.logger.warning(
                             f'Dice score of {dice:.4f} is suspicious!')
+                else:
+                    self.roi_records.append({
+                        'id': patient.id,
+                        'roi': roi_name,
+                        'dice': dice,
+                        })
 
         # Set non-zero status code if maximum number of patients reached
         if self.n_patient >= self.max_patient:
