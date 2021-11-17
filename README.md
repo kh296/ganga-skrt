@@ -55,7 +55,7 @@ may not work with older versions of git.
      ```
    - Add **skrt** to the **ganga-skrt** environment:
      ```
-     pip install -e ../skrt
+     pip install -e ../scikit-rt
      ```
    - Create Ganga configuration file (`~/.gangarc`):
      ```
