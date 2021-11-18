@@ -73,7 +73,8 @@ class SkrtAlgLocal(IRuntimeHandler):
                 f'skrt_{app._name[6:].lower()}.sh',
                 job_script, executable=1)
 
-        outbox.extend(job.outputsandbox)
+        for outputfile in job.outputfiles:
+            outbox.append(outputfile.namePattern)
 
         return StandardJobConfig(
                 exe=job_wrapper, inputbox=inbox, outputbox=outbox)
