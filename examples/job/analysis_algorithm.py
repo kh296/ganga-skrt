@@ -60,13 +60,11 @@ class AnalysisAlgorithm(Algorithm):
 
         if len(study.ct_structure_sets) >= 2:
             # Assume that earliest structure set is from clinical planning
-            study.ct_structure_sets[0]\
-                .rename_rois(names=self.roi_map, keep_renamed_only=True)
-            planning_rois = study.ct_structure_sets[0]
+            planning_rois = study.ct_structure_sets[0]\
+                .filtered_copy(names=self.roi_map, keep_renamed_only=True)
             # Assume that latest structure set is from VoxTox study
-            study.ct_structure_sets[-1]\
-                .rename_rois(names=self.roi_map, keep_renamed_only=True)
-            voxtox_rois = study.ct_structure_sets[-1]
+            voxtox_rois = study.ct_structure_sets[-1]\
+                .filtered_copy(names=self.roi_map, keep_renamed_only=True)
             
             # Calculate dice scores for planning ROIs versus VoxTox ROIs,
             # and add to the list of data records.
