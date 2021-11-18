@@ -75,14 +75,15 @@ opts['Condor'] = 300
 # opts['location'] = os.path.expanduser('~/sw/ROOT')
 #o pt_dict['version'] = '5.30.02'
 # Condor defaults
-opts['rank'] = ''
+# opts['rank'] = ''
+opts['cdf_options'] = {'requirements': '(POOL != "GENERAL" && HAS_r02)'}
 # Default Condor requirements
-opts['excluded_machine'] = ['cl011.hep.phy.private.cam.ac.uk',
-                            'cl012.hep.phy.private.cam.ac.uk',
-                            'cl013.hep.phy.private.cam.ac.uk',
-                            'cl014.hep.phy.private.cam.ac.uk']
+# opts['excluded_machine'] = ['cl011.hep.phy.private.cam.ac.uk',
+#                             'cl012.hep.phy.private.cam.ac.uk',
+#                             'cl013.hep.phy.private.cam.ac.uk',
+#                             'cl014.hep.phy.private.cam.ac.uk']
 
-opts['other'] = '[\'(POOL != "GENERAL" && HAS_r02)\']'
+# opts['other'] = '[\'(POOL != "GENERAL" && HAS_r02)\']'
 
 # Create and modify Ganga configuration file.
 create_default_gangarc()
