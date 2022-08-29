@@ -1,5 +1,6 @@
-import glob
+import platform
 from inspect import getfile
+from pathlib import Path
 
 from skrt.application import Application
 from skrt.core import fullpath
@@ -97,12 +98,14 @@ def get_app(setup_script=''):
 
 def get_paths():
     # Define the patient data to be analysed
-    data_dir = '/Users/karl/data/head_and_neck/vspecial/' \
-               '3_patients__multiple_structures__all_mv/'
-    data_dir = '/r02/voxtox/data/head_and_neck/consolidation/'
-    paths = glob.glob(f'{data_dir}/VT*')
+    if "Linux" == platform.system():
+        data_dir = Path('/r02/voxtox/data/head_and_neck/consolidation/')
+    else:
+        data_dir = Path('~/data/head_and_neck/vspecial/'
+                '3_patients__multiple_structures__all_mv/').expanduser()
+    paths = data_dir.glob('VT*')
 
-    return paths
+    return [str(path) for path in paths]
 
 
 if '__main__' == __name__:
