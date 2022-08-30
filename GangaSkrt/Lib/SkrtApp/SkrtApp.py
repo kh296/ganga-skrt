@@ -25,6 +25,13 @@ class SkrtApp(IPrepareApp):
             sequence=True, defvalue=[],
             typelist=['GangaSkrt.Lib.SkrtAlg.SkrtAlg.SkrtAlg'],
             doc='List of SkrtAlg algorithms to be run'),
+        'patient_class': SimpleItem(
+            defvalue=None,
+            doc='Qualified name of class to use for loading patient datasets'),
+        'patient_opts': SimpleItem(
+            defvalue='{}',
+            doc='Dictionary of options to be passed to constructor of '
+            + 'patient_class'),
         'log_level': SimpleItem(
             defvalue='INFO',
             doc=' Severity level for event logging'),
@@ -50,7 +57,8 @@ class SkrtApp(IPrepareApp):
     # Make available methods implemented in base class
     _exportmethods = ['postprocess', 'prepare', 'unprepare']
 
-    def __init__(self, algs=[], setup_script='', log_level=''):
+    def __init__(self, algs=[], setup_script='', log_level='',
+            patient_class=None, patient_opts={}):
         '''
         Create instance of SkrtApp.
         '''
@@ -59,6 +67,14 @@ class SkrtApp(IPrepareApp):
         if algs:
             self.algs = algs
 
+        if patient_class:
+            assert(isinstance(patient_class, str))
+            self.patient_class = patient_class
+
+        if patient_opts:
+            assert(isinstance(patient_opts, dict))
+            self.patient_opts = patient_opts
+
         if setup_script:
             self.setup_script = setup_script
 
@@ -66,17 +82,25 @@ class SkrtApp(IPrepareApp):
             self.log_level = log_level
 
     @classmethod
-    def from_application(cls, app=None, setup_script=''):
+    def from_application(cls, app=None, setup_script='',
+            patient_class=None, patient_opts={}):
 
         '''
         Create instance of SkrtApp from scikit-rt application
 
-        Parameters
-        ----------
+        **Parameters:**
+
         alg : skrt.application.Application/None
             Scikit-rt application from which properties are to be unpacked
+
         setup_script : str
             Bash setup script to be sourced on worker node
+
+        patient_class : str, default=None
+            Qualified name of class to use for loading patient datasets.
+
+        patient_opts : dict, default={}
+            Dictionary to be passed to constructor of patient_class.
         '''
 
         if app is None:
@@ -84,9 +108,12 @@ class SkrtApp(IPrepareApp):
         else:
             algs = []
             for alg in app.algs:
-                skrt_alg = SkrtAlg.from_algorithm(alg, setup_script)
+                skrt_alg = SkrtAlg.from_algorithm(
+                        alg=alg, setup_script=setup_script)
                 algs.append(skrt_alg)
-            skrt_app = cls(algs, setup_script, app.log_level)
+            skrt_app = cls(algs=algs, setup_script=setup_script,
+                    log_level=app.log_level, patient_class=patient_class,
+                    patient_opts=patient_opts)
 
         return skrt_app
 
@@ -97,11 +124,11 @@ class SkrtApp(IPrepareApp):
         Application configuration extracts information for use by
         runtime handlers.
 
-        Parameter
+        **Parameter:**
+
         master_appconfig : any
             Data structure containing application information
             from configuration before any job splitting.
-            During job submission, this 
         '''
         app = dict(master_appconfig)
         app['algs'] = self.algs
@@ -116,8 +143,11 @@ class SkrtApp(IPrepareApp):
         runtime handlers.
         '''
         app = {
-              'algs': self.algs,
-              'log_level': self.log_level,
-              'setup_script': self.setup_script,
-              }
+                'algs': self.algs,
+                'log_level': self.log_level,
+                'setup_script': self.setup_script,
+                'patient_class': self.patient_class,
+                'patient_opts': self.patient_opts,
+                }
+
         return(False, app)

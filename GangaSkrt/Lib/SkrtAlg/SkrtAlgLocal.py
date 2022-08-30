@@ -30,18 +30,21 @@ class SkrtAlgLocal(IRuntimeHandler):
             - define items to be transferred for when application runs;
             - define items to be returned after application completes.
 
-        Parameters
-        ----------
+        **Parameters:**
+
         app : GangaSkrt.Lib.SkrtAlg.SkrtAlg
             Object representing application to be run.
+
         appsubconfig : dict
             Data structure containing information extracted
             during application configuration after
             any job splitting.
+
         appmasterconfig: any
             In principle a data structure containing information
             extracted during application configuration before
             any job splitting, but here ignored.
+
         jobmasterconfig: any
             In principle a data structure containing information
             extracted during job configuration before
@@ -89,14 +92,16 @@ class SkrtAlgLocal(IRuntimeHandler):
         and initial list of items to be transferred for when
         application runs.
 
-        Parameters
-        ----------
+        **Parameters:**
+
         job          : GangaCore.Lib.Job.Job
             Job object with which application is associated.
+
         appsubconfig : dict
             Data structure containing information extracted
             during application configuration after
             any job splitting.
+
         patient_data : str, default='patient_data'
             Name to be used for file containing paths to input data.
         '''
@@ -120,6 +125,7 @@ class SkrtAlgLocal(IRuntimeHandler):
                     '',])
         lines.extend([
             'python << PYTHON_END',
+            'import importlib',
             'import multiprocessing',
             'import platform',
             'import socket',
@@ -159,10 +165,11 @@ class SkrtAlgLocal(IRuntimeHandler):
         application runs, and initial list of items to be returned
         after application completes.
 
-        Parameters
-        ----------
+        **Parameters:**
+
         job          : GangaCore.Lib.Job.Job
             Job object with which application is associated.
+
         appsubconfig : dict
             Data structure containing information extracted
             during application configuration after
@@ -189,14 +196,28 @@ class SkrtAlgLocal(IRuntimeHandler):
             lines.append('import %s' % (alg_module_name))
         else:
             alg_module_name = 'skrt_app'
+
+        if appsubconfig['patient_class']:
+            p_module, p_class = appsubconfig['patient_class'].rsplit('.', 1)
+            lines.extend([
+                'PatientClass = getattr(importlib.import_module(',
+               f'    "{p_module}"), "{p_class}")',
+                ])
+        else:
+            lines.append('PatientClass = None')
+
+        lines.extend([
+            f'kwargs = {appsubconfig["patient_opts"]}',
+            '',
+            ])
+
         lines.extend([
             f'SkrtAlgClass = getattr({alg_module_name}, "{alg_class}")',
             f'skrt_alg = SkrtAlgClass(name="{alg_name}", opts={opts}, '
             f'log_level="{log_level}")',
             'algs = [skrt_alg]',
-            'app = skrt_app.Application'
-            f'(algs=algs)',
-            'status = app.run(paths=paths)',
+            'app = skrt_app.Application(algs=algs)',
+            f'status = app.run(paths, PatientClass, **kwargs)',
             'print()',
             'print(f"Return code: {status.code}")',
             'if not status.ok():',
@@ -214,9 +235,9 @@ class SkrtAlgLocal(IRuntimeHandler):
         Returns tail of wrapper script for handling application, and
         extended list of items to be returned after application completes.
 
-        Parameter
-        ---------
-        job          : GangaCore.Lib.Job.Job
+        **Parameter:**
+
+        job : GangaCore.Lib.Job.Job
             Job object with which application is associated.
         '''
         lines = \

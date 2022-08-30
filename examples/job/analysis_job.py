@@ -3,7 +3,8 @@ from inspect import getfile
 from pathlib import Path
 
 from skrt.application import Application
-from skrt.core import fullpath
+from skrt.core import Data, fullpath
+from skrt.patient import Patient
 
 from analysis_algorithm import AnalysisAlgorithm
 
@@ -108,22 +109,45 @@ def get_paths():
     return [str(path) for path in paths]
 
 
+def get_data_loader():
+    # Define class and options for loading patient data.
+    PatientClass = None
+    patient_opts = {}
+
+    # Determine qualified name if PatientClass is a class.
+    if isinstance(PatientClass, type):
+        patient_class = f"{PatientClass.__module__}.{PatientClass.__name__}"
+    else:
+        patient_class = None
+
+    return (PatientClass, patient_class, patient_opts)
+
+
 if '__main__' == __name__:
     # Define and configure the application to be run.
     app = get_app()
+
+    # Define class and options for loading patient datasets.
+    PatientClass, patient_class, patient_opts = get_data_loader()
 
     # Define the patient data to be analysed
     paths = get_paths()
 
     # Run application for the selected data
-    app.run(paths)
+    app.run(paths, PatientClass, patient_opts)
 
 if 'Ganga' in __name__:
     # Define script for setting analysis environment
     setup_script = fullpath('skrt_conda.sh')
 
+    # Define class and options for loading patient datasets.
+    PatientClass, patient_class, patient_opts = get_data_loader()
+
     # Define and configure the application to be run.
-    ganga_app = SkrtApp._impl.from_application(get_app(), setup_script)
+    ganga_app = SkrtApp._impl.from_application(get_app(), setup_script,
+            patient_class, patient_opts)
+#    ganga_app = SkrtAlg._impl.from_algorithm(get_app().algs[0], setup_script,
+#            patient_class, patient_opts)
 
     # Define the patient data to be analysed
     paths = get_paths()

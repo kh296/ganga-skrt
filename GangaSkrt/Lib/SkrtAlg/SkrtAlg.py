@@ -38,6 +38,15 @@ class SkrtAlg(IPrepareApp):
             defvalue={},
             doc='Dictionary of options to be passed '
                 + 'to algorithm constructor'),
+        'patient_class': SimpleItem(
+            defvalue=None,
+            doc='Qualified name of class to use for loading patient datasets\n'
+            + '(ignored if SkrtAlg is passed in list to SkrtApp)'),
+        'patient_opts': SimpleItem(
+            defvalue='{}',
+            doc='Dictionary of options to be passed to constructor of '
+            + 'patient_class\n'
+            + '(ignored if SkrtAlg is passed in list to SkrtApp)'),
         'log_level': SimpleItem(
             defvalue='INFO',
             doc=' Severity level for event logging'),
@@ -61,29 +70,43 @@ class SkrtAlg(IPrepareApp):
     _exportmethods = ['postprocess', 'prepare', 'unprepare']
 
     def __init__(self, alg_class='', alg_module='', alg_name='',
-                 opts={}, log_level='', setup_script=''):
+                 opts={}, log_level='', setup_script='',
+                 patient_class=None, patient_opts={}):
         '''
         Create instance of SkrtAlg.
 
         Parameters in the function declaration correspond to schema items.
         Type checking is performed for parameter values.
 
-        Parameters
-        ----------
-        alg_class    : str, default=''
-            Name of scikit-rt  algorithm class to be instantiated
-        alg_module   : str, default=''
-            Path to module containing scikit-rt algorithm class
-        alg_name     : str, default=''
-            Name to be associated with algorithm instantiation
-        opts         : dict, default={}
-            Dictionary of options to be passed to algorithm constructor
-        log_level    : str, default=''
+        **Parameters:**
+
+        alg_class : str, default=''
+            Name of scikit-rt  algorithm class to be instantiated.
+
+        alg_module : str, default=''
+            Path to module containing scikit-rt algorithm class.
+
+        alg_name : str, default=''
+            Name to be associated with algorithm instantiation.
+
+        opts : dict, default={}
+            Dictionary of options to be passed to algorithm constructor.
+
+        patient_class : str, default=None
+            Qualified name of class to use for loading patient datasets;
+            ignored if SkrtAlg is passed in list to SkrtApp.
+
+        patient_opts : dict, default={}
+            Dictionary to be passed to constructor of patient_class;
+            ignored if SkrtAlg is passed in list to SkrtApp.
+
+        log_level : str, default=''
             Severity level for event logging.  Allowed values are:
-            'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+            'NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'.
+
         setup_script : str, default=''
             Bash setup script to be sourced on worker node;
-            ignored if SkrtAlg is passed in list to SkrtApp
+            ignored if SkrtAlg is passed in list to SkrtApp.
         '''
         super(SkrtAlg, self).__init__()
 
@@ -103,6 +126,14 @@ class SkrtAlg(IPrepareApp):
             assert(isinstance(opts, dict))
             self.opts = opts
 
+        if patient_class:
+            assert(isinstance(patient_class, str))
+            self.patient_class = patient_class
+
+        if patient_opts:
+            assert(isinstance(patient_opts, dict))
+            self.patient_opts = patient_opts
+
         log_levels = ['NOTSET', 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
         if log_level:
             assert(log_level in log_levels)
@@ -113,17 +144,27 @@ class SkrtAlg(IPrepareApp):
             self.setup_script = setup_script
 
     @classmethod
-    def from_algorithm(cls, alg=None, setup_script=''):
+    def from_algorithm(cls, alg=None, setup_script='',
+            patient_class=None, patient_opts={}):
 
         '''
         Create instance of SkrtAlg from scikit-rt algorithm
 
-        Parameters
-        ----------
+        **Parameters:**
+
         alg : skrt.application.Algorithm/None
             Scikit-rt algorithm from which properties are to be unpacked
+
         setup_script : str
             Bash setup script to be sourced on worker node;
+            ignored if SkrtAlg is passed in list to SkrtApp
+
+        patient_class : str, default=None
+            Qualified name of class to use for loading patient datasets;
+            ignored if SkrtAlg is passed in list to SkrtApp
+
+        patient_opts : dict, default={}
+            Dictionary to be passed to constructor of patient_class;
             ignored if SkrtAlg is passed in list to SkrtApp
         '''
 
@@ -138,7 +179,9 @@ class SkrtAlg(IPrepareApp):
             log_level = alg.log_level
             skrt_alg = cls(alg_class=alg_class, alg_module=alg_module,
                           alg_name=alg_name, opts=opts, log_level=log_level,
-                          setup_script=setup_script)
+                          setup_script=setup_script,
+                          patient_class=patient_class,
+                          patient_opts=patient_opts)
 
         return skrt_alg
 
@@ -152,6 +195,8 @@ class SkrtAlg(IPrepareApp):
                 'alg_module = \'%s\'' % self.alg_module,
                 'alg_name = \'%s\'' % self.alg_name,
                 'opts = %s' % str(self.opts),
+                'patient_class = \'%s\'' % self.patient_class,
+                'patient_opts = %s' % str(self.patient_opts),
                 'log_level = %s' % str(self.log_level),
                 'setup_script = \'%s\'' % self.setup_script,
             ]
@@ -168,11 +213,11 @@ class SkrtAlg(IPrepareApp):
         Application configuration extracts information for use by
         runtime handlers.
 
-        Parameter
+        **Parameter:**
+
         master_appconfig : any
             Data structure containing application information
             from configuration before any job splitting.
-            During job submission, this 
         '''
 
         app = dict(master_appconfig)
@@ -195,6 +240,8 @@ class SkrtAlg(IPrepareApp):
                 'alg_module': self.alg_module,
                 'alg_name': self.alg_name,
                 'opts': self.opts,
+                'patient_class': self.patient_class,
+                'patient_opts': self.patient_opts,
                 'log_level': self.log_level,
                 'setup_script': self.setup_script,
             }

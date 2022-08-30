@@ -56,6 +56,20 @@ class SkrtAppLocal(SkrtAlgLocal):
                         os.path.splitext(os.path.basename(alg_module))[0]
                     lines.append('import %s' % (alg_module_name))
 
+        if appsubconfig['patient_class']:
+            p_module, p_class = appsubconfig['patient_class'].rsplit('.', 1)
+            lines.extend([
+                'PatientClass = getattr(importlib.import_module(',
+               f'    "{p_module}"), "{p_class}")',
+                ])
+        else:
+            lines.append('PatientClass = None')
+
+        lines.extend([
+            f'kwargs = {appsubconfig["patient_opts"]}',
+            '',
+            ])
+
         for skrt_alg in algs:
             if skrt_alg.alg_module:
                 alg_module_name = os.path.splitext(
@@ -74,7 +88,7 @@ class SkrtAppLocal(SkrtAlgLocal):
                 '',
                 'app = skrt_app.Application'
                 + f'(algs=algs, log_level="{log_level}")',
-                'status = app.run(paths=paths)',
+                'status = app.run(paths, PatientClass, **kwargs)',
                 'print()',
                 'print(f"Return code: {status.code}")',
                 'if not status.ok():',
