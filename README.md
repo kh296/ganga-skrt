@@ -10,17 +10,12 @@ The main Ganga repository is:
 ## Installation
 
 The following have been tested using python 3.8, pip 21.2.2,
-conda 4.10.3 and git 2.28.0.  Repository access via token
-may not work with older versions of git.
+conda 4.10.3 and git 2.28.0.
 
 1. User installation, using [pip](https://pip.pypa.io/en/stable/):
-   - With [gitlab access via ssh keys](https://docs.gitlab.com/ee/ssh/):
+   - Install from github:
      ```
-     pip install git+ssh://git@codeshare.phy.cam.ac.uk:/kh296/ganga-skrt
-     ```
-   - With [gitlab access via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html):
-     ```
-     pip install git+https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt
+     pip install git+https://github.com/kh296/ganga-skrt#egg=ganga-skrt
      ```
    - Create Ganga configuration file (`~/.gangarc`):
      ```
@@ -34,19 +29,11 @@ may not work with older versions of git.
 
 2. Developer installation, using [git](https://git-scm.com) and
 [conda](https://docs.conda.io/):
-   - Set up gitlab access [via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) or [via ssh keys](https://docs.gitlab.com/ee/ssh/).
-   - `cd` to directory where code is to be installed.
    - Clone ganga-skrt and skrt repositories:
-     - With [gitlab access via token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html):
-       ```
-       git clone https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt
-       git clone https://codeshare.phy.cam.ac.uk/hp346/scikit-rt
-       ```
-     - With [gitlab access via ssh keys](https://docs.gitlab.com/ee/ssh/):
-       ```
-       git clone git@codeshare.phy.cam.ac.uk:/kh296/ganga-skrt
-       git clone git@codeshare.phy.cam.ac.uk/hp346/scikit-rt
-       ```
+     ```
+     git clone https://github.com/kh296/ganga-skrt
+     git clone https://github.com/scikit-rt/scikit-rt
+     ```
    - Create and activate **ganga-skrt** environment:
      ```
      cd ganga-skrt
@@ -81,5 +68,5 @@ may not work with older versions of git.
 
 - For general information on using Ganga, see [Ganga User Guide](https://ganga.readthedocs.io/en/latest/UserGuide/index.html).
 - For examples of defining a Ganga job to run a
-[scikit-rt](https://codeshare.phy.cam.ac.uk/hp346/scikit-rt) application,
-see [ganga-skrt/examples/jobs](https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt/-/tree/main/examples/job).
+[scikit-rt](https://github.com/scikit-rt/scikit-rt) application,
+see [ganga-skrt/examples/job](https://github.com/kh296/ganga-skrt/tree/main/examples/job).
