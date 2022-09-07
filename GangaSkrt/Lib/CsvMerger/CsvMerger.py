@@ -36,7 +36,10 @@ class CsvMerger(IMerger):
                         if append_line:
                             lines.append(line.rstrip())
                         append_line = True
-                if self.strip_headers:
+                # Don't include first line from next file in output
+                # if all except first header are to be omitted,
+                # and at least one line in list of lines for output.
+                if self.strip_headers and lines:
                     append_line = False
 
             out_string = '\n'.join(lines)
