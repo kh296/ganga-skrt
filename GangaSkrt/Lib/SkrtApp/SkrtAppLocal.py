@@ -81,7 +81,8 @@ class SkrtAppLocal(SkrtAlgLocal):
                     f'SkrtAlgClass = getattr({alg_module_name}, '
                     + f'"{skrt_alg.alg_class}")',
                     f'skrt_alg = SkrtAlgClass(name="{skrt_alg.alg_name}", '
-                    + f'opts = {skrt_alg.opts})',
+                    + f'opts = {skrt_alg.opts}, '
+                    + f'log_level="{skrt_alg.log_level}")',
                     'algs.append(skrt_alg)',
             ])
         lines.extend([
