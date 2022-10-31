@@ -243,17 +243,18 @@ class SkrtAlgLocal(IRuntimeHandler):
         lines = \
             [
                 '',
-                'run_data_path = \'%s/execute.dat\' % work_dir',
-                'run_data = open( run_data_path, \'w\' )',
-                'run_data.write( \'Hostname: %s\\n\' % hostname )',
-                'run_data.write( \'Job_start: %s\\n\' % job_start_time )',
-                'run_data.write( \'Job_end: %.6f\\n\' % time.time() )',
-                'run_data.close()',
+                #'run_data_path = \'%s/execute.dat\' % work_dir',
+                #'run_data = open( run_data_path, \'w\' )',
+                #'run_data.write( \'Hostname: %s\\n\' % hostname )',
+                #'run_data.write( \'Job_start: %s\\n\' % job_start_time )',
+                #'run_data.write( \'Job_end: %.6f\\n\' % time.time() )',
+                #'run_data.close()',
                 'print(\'End time: %s\\n\' % time.strftime( time_format ))',
                 'sys.exit( status.code )',
                 'PYTHON_END',
             ]
 
-        outbox = ['execute.dat']
+        #outbox = ['execute.dat']
+        outbox = []
 
         return (lines, outbox)
