@@ -12,10 +12,8 @@ class CsvMerger(IMerger):
     _category = 'postprocessor'
     _name = 'CsvMerger'
     _schema = IMerger._schema.inherit_copy()
-    _schema.datadict['strip_headers'] = SimpleItem(defvalue=True,
-            doc='Strip first row (header) from all files except the first.')
 
-    def mergefiles(self, in_paths=[], out_path=''):
+    def mergefiles(in_paths=[], out_path=''):
         '''
         Merge files of data in CSV format.
 
@@ -28,23 +26,37 @@ class CsvMerger(IMerger):
         '''
 
         if out_path:
-            lines = []
-            append_line = True
+
+            # Obtain sorted list of all column labels.
+            all_labels = set()
             for in_path in in_paths:
                 with open(in_path) as in_file:
-                    for line in in_file:
-                        if append_line:
-                            lines.append(line.rstrip())
-                        append_line = True
-                # Don't include first line from next file in output
-                # if all except first header are to be omitted,
-                # and at least one line in list of lines for output.
-                if self.strip_headers and lines:
-                    append_line = False
+                    labels = in_file.readline().rstrip().split(",")
+                    all_labels = all_labels.union(labels)
+            all_labels = sorted(list(all_labels))
+            lines = [",".join(all_labels)]
 
-            out_string = '\n'.join(lines)
+            # Obtain ordered list of values for each input line of each file,
+            # taking into account that all labels may not be present.
+            for in_path in in_paths:
+                with open(in_path) as in_file:
+                    labels = in_file.readline().rstrip().split(",")
+                    for line in in_file:
+                        in_values = line.rstrip().split(",")
+                        out_values = []
+                        for label in all_labels:
+                            if label in labels:
+                                idx = labels.index(label)
+                                out_values.append(in_values[idx])
+                            else:
+                                out_values.append("")
+
+                        lines.append(",".join(out_values))
+
+            # Write the merged file.
             with open(out_path, 'w') as out_file:
-                out_file.write(out_string)
+                out_file.write("\n".join(lines))
+
         else:
             logger.warning('Path to output file not defined')
 
