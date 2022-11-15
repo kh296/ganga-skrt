@@ -13,7 +13,7 @@ class CsvMerger(IMerger):
     _name = 'CsvMerger'
     _schema = IMerger._schema.inherit_copy()
 
-    def mergefiles(in_paths=[], out_path=''):
+    def mergefiles(self, in_paths=[], out_path=''):
         '''
         Merge files of data in CSV format.
 
