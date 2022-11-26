@@ -4,5 +4,6 @@ dependencies:
   - pip
   - python=3.8
   - pip:
-    - ganga
+    - ganga==8.6.1
+    - scikit-rt
     - -e .
