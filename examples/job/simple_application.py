@@ -3,11 +3,12 @@
 Example scikit-rt algorithm.
 '''
 
-import glob
-import os
+import platform
 import sys
 
-from skrt.application import Algorithm, Application
+from pathlib import Path
+
+from skrt.application import Algorithm, Application, get_paths
 from skrt.core import fullpath
 
 class SimpleAlgorithm(Algorithm):
@@ -123,21 +124,29 @@ def get_app(setup_script=''):
 
     return app
 
-def get_paths():
+def get_data_locations():
+    """
+    Specify locations of patient datasets.
+    """
     # Define the patient data to be analysed
-    data_dir = '/Users/karl/data/head_and_neck/vspecial/' \
-               '3_patients__multiple_structures__all_mv/'
-    data_dir = '/r02/voxtox/data/head_and_neck/consolidation/'
-    paths = glob.glob(f'{data_dir}/VT*')
+    if "Linux" == platform.system():
+        data_dirs = [Path(f"/r02/voxtox/data/{site}")
+                for site in ["cns", "head_and_neck", "prostate"]]
+        patterns = [f"{subdir}{cohort}/VT*"
+                for cohort in ["consolidation", "discovery"]
+                for subdir in ["", "*/"]]
+    else:
+        data_dirs = [Path("~/data/voxtox_check").expanduser()]
+        patterns = ["VT*"]
 
-    return paths
+    return {data_dir: patterns for data_dir in data_dirs}
 
 if '__main__' == __name__:
     # Define and configure the application to be run.
     app = get_app()
 
     # Define the patient data to be analysed
-    paths = get_paths()
+    paths = get_paths(get_data_locations(), 2)
 
     # Run application for the selected data
     app.run(paths)
@@ -150,12 +159,19 @@ if 'Ganga' in __name__:
     ganga_app = SkrtApp._impl.from_application(get_app(), setup_script)
 
     # Define the patient data to be analysed
-    paths = get_paths()
-    input_data = PatientDataset(paths=paths[0:3])
+    if "Linux" == platform.system():
+        paths = get_paths(get_data_locations())
+    else:
+        paths = get_paths(get_data_locations(), 2)
 
-    # Define processing system
-    backend = Local()
-    # backend = Condor()
+    input_data = PatientDataset(paths=paths)
+
+    # Define processing system.
+    if "Linux" == platform.system():
+        backend = Condor()
+        backend.cdf_options["request_memory"]="12G"
+    else:
+        backend = Local()
 
     # Define how job should be split into subjobs
     splitter = PatientDatasetSplitter(patients_per_subjob=1)
@@ -167,7 +183,7 @@ if 'Ganga' in __name__:
     postprocessors = [merger]
 
     # Define job name
-    name = 'example_job'
+    name = 'simple_application'
 
     # Define list of outputs to be saved
     outbox = []
