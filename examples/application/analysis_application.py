@@ -1,15 +1,31 @@
+# analysis_application.py
+"""
+Example application that runs an algorithm defined in a separate module.
+
+The application is defined and configured via three user-provided functions:
+
+- **get_app()**: this defines the algorithm(s) to run,
+  and run-time parameter values.
+- **get_data_loader()**: this defines the class to be used for
+  loading patient datasets, and options to be passed to the class constructor.
+- **get_data_locations()**: this defines directories and search patterns
+  for identifying datasets to be analysed.
+
+With these functions, algorithm(s) to run, options, and datasets to be analysed
+are defined once, then can be used for running both interactively and
+using Ganga.
+"""
+
 import platform
 from inspect import getfile
 from pathlib import Path
 
-from skrt.application import Application
-from skrt.core import Data, fullpath
-from skrt.patient import Patient
+from skrt.application import Application, get_paths
+from skrt.core import Data, fullpath, qualified_name
 
 from analysis_algorithm import AnalysisAlgorithm
 
-
-def get_app(setup_script=''):
+def get_app():
     '''
     Define and configure application to be run.
     '''
@@ -29,20 +45,20 @@ def get_app(setup_script=''):
     # Create dictionary where each key is a name to be assigned
     # to a region of interest (ROI), and the associated value
     # is the list of names that may have been used during contouring.
-    opts['roi_map'] = {}
-    opts['roi_map']['parotid_left'] = [
+    opts['roi_names'] = {}
+    opts['roi_names']['parotid_left'] = [
         'left parotid (dn)', 'left parotid - dn',
         'l parotid', 'left parotid', 'lt parotid', 'parotid lt', 'parotid_l',
         'parotid l', 'parotid_l_', 'parotid_l1', 'parotid left',
         'parotid_l_sp', 'left  parotid', 'l  parotid', 'l parotid_old',
         'l parotid b', 'leftparotid']
-    opts['roi_map']['parotid_right'] = [
+    opts['roi_names']['parotid_right'] = [
         'right parotid (dn)', 'right parotid - dn',
         'r parotid', 'right parotid', 'rt parotid', 'parotid rt', 'parotid_r',
         'parotid r', 'parotid_r_', 'parotid_r1', 'parotid right',
         'parotid_r_sp', 'right  parotid', 'r  parotid', 'r parotid_old',
         'r parotid b', 'rightparotid']
-    opts['roi_map']['smg_left'] = [
+    opts['roi_names']['smg_left'] = [
         'l submandibular gland', 'left submandibular', 'lt submandibular',
         'left submandibular gland', 'l submandibular', 'l submandib',
         'left submandibular glan', 'l submand', 'l submand gland',
@@ -58,7 +74,7 @@ def get_app(setup_script=''):
         'left submand gland', 'lt submandblr', 'submand left (in ptv)',
         'l smgland', 'l submadibular', 'left sumandibular gland',
         'l submandibular_old', 'l sum mandib']
-    opts['roi_map']['smg_right'] = [
+    opts['roi_names']['smg_right'] = [
         'r submandibular gland', 'right submandibular', 'rt submandibular',
         'right submandibular gland', 'r submandibular', 'r submandib',
         'right submandibular glan', 'r submand', 'r submand gland',
@@ -74,7 +90,7 @@ def get_app(setup_script=''):
         'right submand gland', 'rt submandblr', 'submand right (in ptv)',
         'r smgland', 'r submadibular', 'right sumandibular gland',
         'r submandibular_old', 'r sum mandib']
-    opts['roi_map']['spinal_cord'] = [
+    opts['roi_names']['spinal_cord'] = [
         'spinal cord - dn', 'cord', 'spinal cord', 'spinal_cord',
         'spinal cord sjj', 'spinal cord - sjj', 'spinal_cord_sp'
         'spine', 'spinal_canal_sp', 'spinal_cord_', 'spinal canal',
@@ -97,30 +113,33 @@ def get_app(setup_script=''):
     return app
 
 
-def get_paths():
-    # Define the patient data to be analysed
-    if "Linux" == platform.system():
-        data_dir = Path('/r02/voxtox/data/head_and_neck/consolidation/')
-    else:
-        data_dir = Path('~/data/head_and_neck/vspecial/'
-                '3_patients__multiple_structures__all_mv/').expanduser()
-    paths = data_dir.glob('VT*')
-
-    return [str(path) for path in paths]
-
-
 def get_data_loader():
-    # Define class and options for loading patient data.
+    """
+    Define class and options to be used for loading patient data.
+    """
+    # With PatientClass set to None,
+    # the class for data loading defaults to skrt.patient.Patient.
     PatientClass = None
     patient_opts = {}
 
-    # Determine qualified name if PatientClass is a class.
-    if isinstance(PatientClass, type):
-        patient_class = f"{PatientClass.__module__}.{PatientClass.__name__}"
-    else:
-        patient_class = None
+    return (PatientClass, qualified_name(PatientClass), patient_opts)
 
-    return (PatientClass, patient_class, patient_opts)
+
+def get_data_locations():
+    """
+    Specify locations of patient datasets.
+    """
+    # Define paths to directories containing datasets to be analysed.
+    if "Linux" == platform.system():
+        data_dirs = [Path(f"/r02/voxtox/data/head_and_neck/consolidation/")]
+    else:
+        data_dirs = [Path('~/data/head_and_neck/vspecial/'
+            '3_patients__multiple_structures__all_mv/').expanduser()]
+
+    # Define lists of patterns identifying patient folders.
+    patterns = ["VT*"]
+
+    return {data_dir: patterns for data_dir in data_dirs}
 
 
 if '__main__' == __name__:
@@ -131,10 +150,10 @@ if '__main__' == __name__:
     PatientClass, patient_class, patient_opts = get_data_loader()
 
     # Define the patient data to be analysed
-    paths = get_paths()
+    paths = get_paths(get_data_locations(), 2)
 
     # Run application for the selected data
-    app.run(paths, PatientClass, patient_opts)
+    app.run(paths, PatientClass, **patient_opts)
 
 if 'Ganga' in __name__:
     # Define script for setting analysis environment
@@ -146,16 +165,20 @@ if 'Ganga' in __name__:
     # Define and configure the application to be run.
     ganga_app = SkrtApp._impl.from_application(get_app(), setup_script,
             patient_class, patient_opts)
-#    ganga_app = SkrtAlg._impl.from_algorithm(get_app().algs[0], setup_script,
-#            patient_class, patient_opts)
 
     # Define the patient data to be analysed
-    paths = get_paths()
-    input_data = PatientDataset(paths=paths[0:3])
+    if "Linux" == platform.system():
+        paths = get_paths(get_data_locations())
+    else:
+        paths = get_paths(get_data_locations(), 2)
+    input_data = PatientDataset(paths=paths)
 
-    # Define processing system
-    backend = Local()
-    # backend = Condor()
+    # Define processing system.
+    if "Linux" == platform.system():
+        backend = Condor()
+        backend.cdf_options["request_memory"]="12G"
+    else:
+        backend = Local()
 
     # Define how job should be split into subjobs
     splitter = PatientDatasetSplitter(patients_per_subjob=1)

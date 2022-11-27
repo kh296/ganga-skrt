@@ -1,3 +1,5 @@
+# analysis_algorithm.py 
+
 import glob
 import os
 
@@ -32,6 +34,11 @@ class AnalysisAlgorithm(Algorithm):
         # Maximum number of patients to be analysed
         self.max_patient = 10000
 
+        # Create dictionary where each key is a name to be assigned
+        # to a region of interest (ROI), and the associated value
+        # is the list of names that may have been used during contouring.
+        self.roi_names = {}
+
         # Call to __init__() method of base class
         # sets values for object properties based on dictionary opts,
         # and creates event logger with speficied name and log_level.
@@ -61,10 +68,10 @@ class AnalysisAlgorithm(Algorithm):
         if len(study.ct_structure_sets) >= 2:
             # Assume that earliest structure set is from clinical planning
             planning_rois = study.ct_structure_sets[0]\
-                .filtered_copy(names=self.roi_map, keep_renamed_only=True)
+                .filtered_copy(names=self.roi_names, keep_renamed_only=True)
             # Assume that latest structure set is from VoxTox study
             voxtox_rois = study.ct_structure_sets[-1]\
-                .filtered_copy(names=self.roi_map, keep_renamed_only=True)
+                .filtered_copy(names=self.roi_names, keep_renamed_only=True)
             
             # Calculate dice scores for planning ROIs versus VoxTox ROIs,
             # and add to the list of data records.
