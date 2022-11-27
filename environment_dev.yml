@@ -1,0 +1,9 @@
+name: ganga-skrt
+dependencies:
+  - ipython
+  - pip
+  - python=3.8
+  - pip:
+    - ganga==8.6.1
+    - -e ../scikit-rt
+    - -e .
