@@ -5,7 +5,7 @@ setup(
     version='0.1.0',    
     description='Scikit-rt components for Ganga job-management framework',
     url='https://codeshare.phy.cam.ac.uk/kh296/ganga-skrt',
-    author='',
+    author='K. Harrison',
     author_email='',
     license='',
     packages=find_packages(),
