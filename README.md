@@ -24,7 +24,7 @@ The recommended installation is using [git](https://git-scm.com/),
 - Create and activate `ganga-skrt` environment, then add `scikit-rt`:
   ```
   cd ganga-skrt
-  conda env create --file environment_dev.yml
+  conda env create --file environment.yml
   conda activate ganga-skrt
   pip install -e ../scikit-rt
   ```
