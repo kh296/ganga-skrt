@@ -17,7 +17,7 @@ app.env = {}
 # Define argument to be passed to the script in different subjobs.
 splitter = ArgSplitter()
 # Each list item is a list of arguments to pass (here only a single argument).
-splitter.args = 20 * [["Hello!"], ["Goodbye!"]]
+splitter.args = [["Hello!"], ["Goodbye!"]]
 
 # Define processing system.
 if "Linux" == platform.system():
