@@ -192,8 +192,10 @@ if 'Ganga' in __name__:
     # Define the patient data to be analysed
     if "Linux" == platform.system():
         paths = get_paths(get_data_locations())
+        patients_per_subjob = 50
     else:
         paths = get_paths(get_data_locations(), 2)
+        patients_per_subjob = 1
 
     input_data = PatientDataset(paths=paths)
 
@@ -205,7 +207,7 @@ if 'Ganga' in __name__:
         backend = Local()
 
     # Define how job should be split into subjobs
-    splitter = PatientDatasetSplitter(patients_per_subjob=1)
+    splitter = PatientDatasetSplitter(patients_per_subjob=patients_per_subjobs)
 
     # Define merging of subjob outputs
     merger = SmartMerger()
