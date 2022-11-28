@@ -54,25 +54,3 @@ The recommended installation is using [git](https://git-scm.com/),
   ```
   ganga simple_application.py
   ```
-
-
-Examples of [scikit-rt](https://github.com/scikit-rt/scikit-rt)
-applications that can be run interactively or via Ganga, can be
-found at:
-- [https://github.com/kh296/ganga-skrt/tree/main/examples/application](https://github.com/kh296/ganga-skrt/tree/main/examples/application)
-and with the developer installation are in the subdirectory:
-- [examples/application](examples/application).
-
-   - Edit `simple_application.py` so that the function `get_data_locations()`
-     returns lists of directories and search patterns that allow identification
-     of  patient datasets  available on the installation machine.
-
-   - Start `ganga` session:
-     ```
-     ganga
-     ```
-
-   - From inside `ganga` session, submit example job:
-     ```
-     ganga simple_application.py
-     ```
