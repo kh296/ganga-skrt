@@ -207,7 +207,7 @@ if 'Ganga' in __name__:
         backend = Local()
 
     # Define how job should be split into subjobs
-    splitter = PatientDatasetSplitter(patients_per_subjob=patients_per_subjobs)
+    splitter = PatientDatasetSplitter(patients_per_subjob=patients_per_subjob)
 
     # Define merging of subjob outputs
     merger = SmartMerger()
