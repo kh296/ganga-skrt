@@ -112,10 +112,6 @@ def get_app(setup_script=''):
     # Set the maximum number of patients to be analysed
     opts['max_patient'] = 2
 
-    # Set options differently for batch processing
-    if 'Ganga' in __name__:
-        opts['max_patient'] = 4
-
     # Set options differently for batch processing via Ganga
     if 'Ganga' in __name__:
         # The number of datasets for processing is set via PatientDataset
