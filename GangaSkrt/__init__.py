@@ -17,7 +17,9 @@ The plugins provided are:
           - PatientDataset: DICOM files, following Skrt organisation;
     - splitters:
           - PatientDatasetSplitter: split datasets at patient level;
-          - PatientMvctSplitter: split datasets at scan level;
+          - PatientImageSplitter: split datasets at image level;
+          - PatientMvctSplitter: split datasets at MV CT level
+            => deprecated: used PatientImageSplitter;
     - mergers:
           - CsvMerger: merge files of data in CSV format;
           - JsonMerger: merge files of data in JSON format.
@@ -54,6 +56,7 @@ def loadPlugins(config={}):
     import GangaSkrt.Lib.JsonMerger
     import GangaSkrt.Lib.PatientDataset
     import GangaSkrt.Lib.PatientDatasetSplitter
+    import GangaSkrt.Lib.PatientImageSplitter
     import GangaSkrt.Lib.PatientMvctSplitter
     import GangaSkrt.Lib.SkrtAlg
     import GangaSkrt.Lib.SkrtApp
