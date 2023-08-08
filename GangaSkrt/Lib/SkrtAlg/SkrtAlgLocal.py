@@ -220,7 +220,7 @@ class SkrtAlgLocal(IRuntimeHandler):
             f'status = app.run(paths, PatientClass, **kwargs)',
             'print()',
             'print(f"Return code: {status.code}")',
-            'if not status.ok():',
+            'if not status.is_ok():',
             '    print(f\'Status name: {status.name}\')',
             '    print(f\'Status reason: {status.reason}\')',
             'print()',

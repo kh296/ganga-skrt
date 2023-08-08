@@ -92,7 +92,7 @@ class SkrtAppLocal(SkrtAlgLocal):
                 'status = app.run(paths, PatientClass, **kwargs)',
                 'print()',
                 'print(f"Return code: {status.code}")',
-                'if not status.ok():',
+                'if not status.is_ok():',
                 '    sys.stderr.write'
                 + '(\'\\n\'.join([status.name, status.reason]))',
                 'print(\'\')',
