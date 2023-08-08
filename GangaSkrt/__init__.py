@@ -1,5 +1,5 @@
 # File: GangaSkrt/__init__.py
-'''
+"""
 Skrt plugins for the Ganga job-management framework.
 
 This package has the standard structure of a Ganga runtime package:
@@ -42,16 +42,17 @@ For information about Ganga, see:
 
 The Ganga repository is:
     https://github.com/ganga-devs/ganga
-'''
+"""
 
-def loadPlugins(config={}):
-    '''
+
+def loadPlugins(config=None):
+    """
     Load GangaSkrt plugins.
 
     If GangaSkrt is in Ganga's runtime path, this function is called
     during bootstrap, via the loadPlugins() method of
     GangaCore.Utility.Runtime.RuntimePackage.
-    '''
+    """
     import GangaSkrt.Lib.CsvMerger
     import GangaSkrt.Lib.JsonMerger
     import GangaSkrt.Lib.PatientDataset
@@ -60,4 +61,3 @@ def loadPlugins(config={}):
     import GangaSkrt.Lib.PatientMvctSplitter
     import GangaSkrt.Lib.SkrtAlg
     import GangaSkrt.Lib.SkrtApp
-    return None

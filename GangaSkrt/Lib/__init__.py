@@ -1,5 +1,5 @@
 # File: GangaSkrt/Lib/__init__.py
-'''
+"""
 Library of scikit-rt plugins for the Ganga job-management framework.
 
 This package contains the following sub-packages:
@@ -13,4 +13,4 @@ This package contains the following sub-packages:
       => deprecated: use PatientImageSplitter;
     - SkrtAlg: defines SkrtAlg application and its runtime handling;
     - SkrtApp: defines SkrtApp application and its runtime handling.
-'''
+"""
