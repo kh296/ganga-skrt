@@ -22,7 +22,7 @@ splitter.args = [["Hello!"], ["Goodbye!"]]
 # Define processing system.
 if "Linux" == platform.system():
     backend = Condor()
-    backend.cdf_options["request_memory"]="1G"
+    backend.cdf_options["request_memory"] = "1G"
 else:
     backend = Local()
 
@@ -36,6 +36,11 @@ postprocessors = [merger]
 name = "echo"
 
 # Create the job, and submit to processing system
-j = Job(application=app, backend=backend, splitter=splitter,
-        postprocessors=postprocessors, name=name)
+j = Job(
+    application=app,
+    backend=backend,
+    splitter=splitter,
+    postprocessors=postprocessors,
+    name=name,
+)
 j.submit()
