@@ -108,7 +108,10 @@ class SkrtAlgLocal(IRuntimeHandler):
         """
 
         paths_file = f"{patient_data}.py"
-        inbox = [job.inputdata.write_paths_to_file_buffer(paths_file)]
+        if hasattr(job.inputdata, "write_paths_to_file_buffer"):
+            inbox = [job.inputdata.write_paths_to_file_buffer(paths_file)]
+        else:
+            inbox = [FileBuffer(paths_file, "paths = []")]
 
         setup_script = appsubconfig["setup_script"]
 
