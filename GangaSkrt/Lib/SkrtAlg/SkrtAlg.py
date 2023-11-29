@@ -198,7 +198,6 @@ class SkrtAlg(IPrepareApp):
         else:
             alg_class = type(alg).__name__
             alg_module = alg.alg_module
-            print(alg.__class__.__module__)
             alg_name = alg.name
             opts = alg.opts
             log_level = alg.log_level
